@@ -43,9 +43,13 @@ etl_init.etl_airlines <- function(obj, ...) {
     sql <- system.file("sql", "init.sql", package = "airlines")
   }
   obj$init <- dbRunScript(obj$con, sql)
+  cat("downloading carriers.\n")
   init_carriers(obj)
+  cat("downloading airports.\n")
   init_airports(obj)
+  cat("downloading planes.\n")
   init_planes(obj)
+  cat("downloading weather.\n")
   init_weather(obj)
   return(obj)
 }
@@ -71,11 +75,11 @@ init_carriers <- function(obj, ...) {
 }
 
 init_airports <- function(obj, ...) {
-  src <- "http://raw.githubusercontent.com/jpatokal/openflights/master/data/airports.dat"
+  src <- "https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports.dat"
   lcl <- paste0(obj$dir, "/airports.dat")
   
   if (!file.exists(lcl)) {
-    download.file(src, lcl)
+    download.file(src, lcl, method="curl")
   }
   obj$files <- append(obj$files, lcl)
   
